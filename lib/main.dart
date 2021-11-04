@@ -18,6 +18,7 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => MaterialApp(
+        title: 'Task Helper',
         theme: ThemeData(
           inputDecorationTheme: const InputDecorationTheme(
             border: OutlineInputBorder(),

@@ -31,11 +31,26 @@ class _Background extends StatelessWidget {
   const _Background({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) => Positioned.fill(
-        bottom: MediaQuery.of(context).size.height * 0.55,
-        child: Material(
-          color: Theme.of(context).primaryColor,
-          elevation: 10,
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Positioned.fill(
+      bottom: MediaQuery.of(context).size.height * 0.55,
+      child: Material(
+        color: theme.primaryColor,
+        elevation: 10,
+        child: Align(
+          alignment: Alignment.topCenter,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 80),
+            child: Text(
+              'Task helper',
+              style: theme.textTheme.headline3
+                  ?.copyWith(color: const Color(0xeeffffff)),
+            ),
+          ),
         ),
-      );
+      ),
+    );
+  }
 }

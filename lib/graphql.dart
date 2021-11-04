@@ -14,7 +14,7 @@ GraphQLClient _getRefreshClient() {
   );
 
   return GraphQLClient(
-    link: _apiLink.concat(authLink),
+    link: authLink.concat(_apiLink),
     cache: GraphQLCache(),
   );
 }
@@ -51,7 +51,7 @@ ValueNotifier<GraphQLClient> _getGqlClient() {
 
   return ValueNotifier(
     GraphQLClient(
-      link: _apiLink.concat(authLink),
+      link: authLink.concat(_apiLink),
       cache: GraphQLCache(),
     ),
   );

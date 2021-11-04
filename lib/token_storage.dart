@@ -4,6 +4,8 @@ import 'package:task_helper/models/token.dart';
 Token? _accessToken;
 Token? _refreshToken;
 
+String? get userId => _refreshToken?.userId ?? _accessToken?.userId;
+
 Future<Token?> getAccessToken() async {
   if (_accessToken != null) return _accessToken;
 
@@ -44,4 +46,9 @@ Future<bool> setRefreshToken(Token? token) async {
   if (token == null) return _storage.remove('refresh_token');
 
   return _storage.setString('refresh_token', token.token);
+}
+
+Future<void> logout() async {
+  setAccessToken(null);
+  await setRefreshToken(null);
 }
