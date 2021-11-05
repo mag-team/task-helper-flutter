@@ -1,7 +1,9 @@
+export 'models/models.dart';
+
 import 'package:flutter/widgets.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:task_helper/models/token.dart';
-import 'package:task_helper/token_storage.dart';
+import 'package:task_helper/src/models/token.dart';
+import 'package:task_helper/src/token_storage.dart';
 
 final HttpLink _apiLink = HttpLink('https://task.skippy-ai.xyz/graphql');
 
@@ -20,9 +22,8 @@ GraphQLClient _getRefreshClient() {
 }
 
 final _refreshClient = _getRefreshClient();
-final gqlClient = _getGqlClient();
 
-ValueNotifier<GraphQLClient> _getGqlClient() {
+ValueNotifier<GraphQLClient> getGqlClient() {
   final AuthLink authLink = AuthLink(
     getToken: () async {
       final token = await getAccessToken();

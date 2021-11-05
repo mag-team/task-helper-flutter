@@ -1,9 +1,13 @@
-class UserSignup {
+class SignupInput {
   final String username;
   final String email;
   final String password;
 
-  UserSignup(this.username, this.email, this.password);
+  const SignupInput({
+    required this.username,
+    required this.email,
+    required this.password,
+  });
 
   Map<String, dynamic> toMap() => {
         'username': username,

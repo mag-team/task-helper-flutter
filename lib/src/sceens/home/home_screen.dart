@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:task_helper/graphql.dart';
-import 'package:task_helper/models/user.dart';
-import 'package:task_helper/token_storage.dart';
+import 'package:task_helper/src/graphql/graphql.dart';
+import 'package:task_helper/src/models/user.dart';
+import 'package:task_helper/src/token_storage.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:task_helper/graphql.dart';
-import 'package:task_helper/models/dto/token_response.dart';
-import 'package:task_helper/models/dto/user_login.dart';
-import 'package:task_helper/models/token.dart';
-import 'package:task_helper/token_storage.dart';
+import 'package:task_helper/src/graphql/graphql.dart';
+import 'package:task_helper/src/models/token.dart';
+import 'package:task_helper/src/token_storage.dart';
 
 import 'auth_card.dart';
 
@@ -45,7 +43,7 @@ class _LoginFormState extends State<LoginForm> {
           if (result?.data != null) {
             WidgetsBinding.instance!.addPostFrameCallback(
               (_) async {
-                final tokens = TokenResponse.fromJson(result!.data!['login']);
+                final tokens = Tokens.fromJson(result!.data!['login']);
 
                 await setAccessToken(Token(tokens.accessToken));
                 await setRefreshToken(Token(tokens.refreshToken));
@@ -56,9 +54,9 @@ class _LoginFormState extends State<LoginForm> {
           }
 
           void submit() => runMutation({
-                'loginInput': UserLogin(
-                  username.text.trim(),
-                  password.text.trim(),
+                'loginInput': LoginInput(
+                  username: username.text.trim(),
+                  password: password.text.trim(),
                 ).toMap()
               });
 

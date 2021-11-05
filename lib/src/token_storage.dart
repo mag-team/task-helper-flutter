@@ -1,5 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:task_helper/models/token.dart';
+
+import 'models/token.dart';
 
 Token? _accessToken;
 Token? _refreshToken;

@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:task_helper/graphql.dart';
-import 'package:task_helper/models/dto/token_response.dart';
-import 'package:task_helper/models/dto/user_signup.dart';
-import 'package:task_helper/models/token.dart';
-import 'package:task_helper/sceens/auth/auth_card.dart';
-import 'package:task_helper/token_storage.dart';
+import 'package:task_helper/src/graphql/graphql.dart';
+import 'package:task_helper/src/models/token.dart';
+import 'package:task_helper/src/token_storage.dart';
+
+import 'auth_card.dart';
 
 class RegisterForm extends StatefulWidget {
   const RegisterForm({Key? key}) : super(key: key);
@@ -49,7 +48,7 @@ class _RegisterFormState extends State<RegisterForm> {
           if (result?.data != null) {
             WidgetsBinding.instance!.addPostFrameCallback(
               (_) async {
-                final tokens = TokenResponse.fromJson(result!.data!['signup']);
+                final tokens = Tokens.fromJson(result!.data!['signup']);
 
                 await setAccessToken(Token(tokens.accessToken));
                 await setRefreshToken(Token(tokens.refreshToken));
@@ -63,10 +62,10 @@ class _RegisterFormState extends State<RegisterForm> {
             if (!formKey.currentState!.validate()) return;
 
             runMutation({
-              'signupInput': UserSignup(
-                username.text.trim(),
-                email.text.trim(),
-                password.text.trim(),
+              'signupInput': SignupInput(
+                username: username.text.trim(),
+                email: email.text.trim(),
+                password: password.text.trim(),
               ).toMap()
             });
           }

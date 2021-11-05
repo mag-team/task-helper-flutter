@@ -1,8 +1,11 @@
-class UserLogin {
+class LoginInput {
   final String username;
   final String password;
 
-  const UserLogin(this.username, this.password);
+  const LoginInput({
+    required this.username,
+    required this.password,
+  });
 
   Map<String, dynamic> toMap() => {
         'username': username,
