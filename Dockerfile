@@ -15,7 +15,7 @@ WORKDIR /app
 
 COPY ./lib ./lib
 COPY ./web ./web
-COPY pubspec.* .
+COPY pubspec.* ./
 
 RUN flutter build web --web-renderer canvaskit
 
