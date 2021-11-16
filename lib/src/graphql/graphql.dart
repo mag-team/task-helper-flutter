@@ -1,60 +1,62 @@
 export 'models/models.dart';
 
-import 'package:flutter/widgets.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:task_helper/src/cubit/auth_cubit.dart';
 import 'package:task_helper/src/models/token.dart';
-import 'package:task_helper/src/token_storage.dart';
 
-final HttpLink _apiLink = HttpLink('https://task.skippy-ai.xyz/graphql');
+GraphQLClient _getRefreshClient(AuthCubit authCubit, String gqlUrl) {
+  final apiLink = HttpLink(gqlUrl);
 
-GraphQLClient _getRefreshClient() {
   final AuthLink authLink = AuthLink(
     getToken: () async {
-      final token = await getRefreshToken();
-      return token != null ? 'Bearer $token' : null;
+      final state = authCubit.state;
+      if (state is! AuthSuccess || state.refreshToken.isExpired) return null;
+      return 'Bearer ${state.refreshToken}';
     },
   );
 
   return GraphQLClient(
-    link: authLink.concat(_apiLink),
+    link: authLink.concat(apiLink),
     cache: GraphQLCache(),
   );
 }
 
-final _refreshClient = _getRefreshClient();
+GraphQLClient getGqlClient(AuthCubit authCubit, String gqlUrl) {
+  final refreshClient = _getRefreshClient(authCubit, gqlUrl);
 
-ValueNotifier<GraphQLClient> getGqlClient() {
+  final apiLink = HttpLink(gqlUrl);
+
   final AuthLink authLink = AuthLink(
     getToken: () async {
-      final token = await getAccessToken();
-      if (token?.isExpired == false) return 'Bearer $token';
+      final state = authCubit.state;
+      if (state is! AuthSuccess) return null;
 
-      final refreshToken = await getRefreshToken();
-      if (refreshToken == null) return null;
+      if (state.accessToken?.isExpired == false) {
+        return 'Bearer ${state.accessToken}';
+      }
 
-      if (refreshToken.isExpired) {
-        await setRefreshToken(null);
+      // Cannot refresh refresh token
+      if (state.refreshToken.isExpired) {
+        await authCubit.logout();
         return null;
       }
 
       // Request new token
-      final res = await _refreshClient.mutate(MutationOptions(
+      final res = await refreshClient.mutate(MutationOptions(
         document: gql(refreshMutation),
       ));
 
       if (res.hasException) return null;
 
       final newToken = Token(res.data!['refreshAccessToken']['access_token']);
-      await setAccessToken(newToken);
+      authCubit.refreshToken(newToken);
       return 'Bearer $newToken';
     },
   );
 
-  return ValueNotifier(
-    GraphQLClient(
-      link: authLink.concat(_apiLink),
-      cache: GraphQLCache(),
-    ),
+  return GraphQLClient(
+    link: authLink.concat(apiLink),
+    cache: GraphQLCache(),
   );
 }
 

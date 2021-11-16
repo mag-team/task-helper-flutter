@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:task_helper/src/graphql/graphql.dart';
-import 'package:task_helper/src/models/user.dart';
-import 'package:task_helper/src/token_storage.dart';
+
+import 'profile_dialog.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -96,7 +94,7 @@ class TopBar extends StatelessWidget {
                     child: InkWell(
                       onTap: () => showDialog(
                         context: context,
-                        builder: (_) => const Profile(),
+                        builder: (_) => const ProfileDialog(),
                       ),
                       child: const Padding(
                         padding: EdgeInsets.all(8),
@@ -110,82 +108,6 @@ class TopBar extends StatelessWidget {
                 ),
               ),
             ],
-          ),
-        ),
-      );
-}
-
-class Profile extends StatelessWidget {
-  const Profile({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) => Dialog(
-        child: Padding(
-          padding: const EdgeInsets.all(30),
-          child: Query(
-            options: QueryOptions(
-              document: gql(userQuery),
-              variables: {'id': userId},
-            ),
-            builder: (result, {fetchMore, refetch}) {
-              final textTheme = Theme.of(context).textTheme;
-
-              if (result.hasException) {
-                debugPrint(result.exception?.toString());
-
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.error),
-                    Text(
-                      'Something went wrong',
-                      style: textTheme.subtitle1,
-                    ),
-                  ],
-                );
-              }
-
-              if (result.isLoading) {
-                return const SizedBox(
-                  height: 100,
-                  width: 100,
-                  child: Center(child: CircularProgressIndicator()),
-                );
-              }
-
-              final user = User.fromMap(result.data!['user']);
-
-              return SizedBox(
-                width: 400,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('My profile', style: textTheme.headline4),
-                          const SizedBox(height: 15),
-                          Text(user.username, style: textTheme.headline5),
-                          Text(user.email, style: textTheme.subtitle1),
-                          Text(user.id, style: textTheme.subtitle2),
-                        ],
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () async {
-                        await logout();
-                        Navigator.pushNamedAndRemoveUntil(
-                            context, '/', (route) => false);
-                      },
-                      tooltip: 'Logout',
-                      icon: const Icon(Icons.logout, color: Colors.red),
-                    ),
-                  ],
-                ),
-              );
-            },
           ),
         ),
       );

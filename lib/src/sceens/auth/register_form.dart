@@ -1,78 +1,43 @@
 import 'package:flutter/material.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:task_helper/src/graphql/graphql.dart';
-import 'package:task_helper/src/models/token.dart';
-import 'package:task_helper/src/token_storage.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:task_helper/src/cubit/auth_cubit.dart';
+import 'package:task_helper/src/sceens/auth/cubit/register_cubit.dart';
+import 'package:task_helper/src/task_repository.dart';
 
 import 'auth_card.dart';
 
-class RegisterForm extends StatefulWidget {
+class RegisterForm extends StatelessWidget {
   const RegisterForm({Key? key}) : super(key: key);
 
   @override
-  State<RegisterForm> createState() => _RegisterFormState();
-}
-
-class _RegisterFormState extends State<RegisterForm> {
-  final formKey = GlobalKey<FormState>();
-  final username = TextEditingController();
-  final email = TextEditingController();
-  final password = TextEditingController();
-  final rpassword = TextEditingController();
-
-  @override
-  void dispose() {
-    username.dispose();
-    email.dispose();
-    password.dispose();
-    rpassword.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) => Mutation(
-        options: MutationOptions(document: gql(registerMutation)),
-        builder: (runMutation, result) {
-          if (result?.hasException ?? false) {
-            debugPrint(result!.exception.toString());
-            WidgetsBinding.instance!.addPostFrameCallback(
-              (_) => ScaffoldMessenger.of(context).showSnackBar(
+  Widget build(BuildContext context) => BlocProvider(
+        create: (context) => RegisterCubit(
+          taskRepository: context.read<TaskRepository>(),
+          authCubit: context.read<AuthCubit>(),
+        ),
+        child: BlocConsumer<RegisterCubit, RegisterState>(
+          listener: (context, state) {
+            if (state.status == RegisterFormStatus.failed) {
+              ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text('Failed to register'),
                   backgroundColor: Colors.red,
                 ),
-              ),
-            );
-          }
+              );
+            }
+          },
+          builder: (context, state) {
+            void submit() {
+              if (state.status == RegisterFormStatus.inProgress ||
+                  !usernameRegex.hasMatch(state.username) ||
+                  !emailRegex.hasMatch(state.email) ||
+                  !passwordRegex.hasMatch(state.password) ||
+                  state.password != state.repeatPassword) return;
 
-          if (result?.data != null) {
-            WidgetsBinding.instance!.addPostFrameCallback(
-              (_) async {
-                final tokens = Tokens.fromJson(result!.data!['signup']);
+              context.read<RegisterCubit>().submit();
+            }
 
-                await setAccessToken(Token(tokens.accessToken));
-                await setRefreshToken(Token(tokens.refreshToken));
-
-                Navigator.pushNamedAndRemoveUntil(context, '/', (_) => false);
-              },
-            );
-          }
-
-          void submit() {
-            if (!formKey.currentState!.validate()) return;
-
-            runMutation({
-              'signupInput': SignupInput(
-                username: username.text.trim(),
-                email: email.text.trim(),
-                password: password.text.trim(),
-              ).toMap()
-            });
-          }
-
-          return Form(
-            key: formKey,
-            child: AuthCard(
+            return AuthCard(
               children: [
                 Center(
                   child: Text(
@@ -82,7 +47,7 @@ class _RegisterFormState extends State<RegisterForm> {
                 ),
                 const SizedBox(height: 20),
                 TextFormField(
-                  controller: username,
+                  initialValue: state.username,
                   decoration: const InputDecoration(
                     labelText: 'Username',
                     prefixIcon: Icon(Icons.person),
@@ -95,11 +60,13 @@ class _RegisterFormState extends State<RegisterForm> {
                   },
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   autofocus: true,
+                  onChanged: (value) =>
+                      context.read<RegisterCubit>().setUsername(value),
                   onFieldSubmitted: (_) => submit(),
                 ),
                 const SizedBox(height: 10),
                 TextFormField(
-                  controller: email,
+                  initialValue: state.email,
                   decoration: const InputDecoration(
                     labelText: 'Email',
                     prefixIcon: Icon(Icons.mail),
@@ -112,11 +79,13 @@ class _RegisterFormState extends State<RegisterForm> {
                   },
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   keyboardType: TextInputType.emailAddress,
+                  onChanged: (value) =>
+                      context.read<RegisterCubit>().setEmail(value),
                   onFieldSubmitted: (_) => submit(),
                 ),
                 const SizedBox(height: 10),
                 TextFormField(
-                  controller: password,
+                  initialValue: state.password,
                   decoration: const InputDecoration(
                     labelText: 'Password',
                     prefixIcon: Icon(Icons.vpn_key),
@@ -129,35 +98,35 @@ class _RegisterFormState extends State<RegisterForm> {
                   },
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   obscureText: true,
+                  onChanged: (value) =>
+                      context.read<RegisterCubit>().setPassword(value),
                   onFieldSubmitted: (_) => submit(),
                 ),
                 const SizedBox(height: 10),
                 TextFormField(
-                  controller: rpassword,
+                  initialValue: state.repeatPassword,
                   decoration: const InputDecoration(
                     labelText: 'Repeat password',
                     prefixIcon: Icon(Icons.vpn_key),
                   ),
                   validator: (value) {
                     if (value == null) return null;
-                    return password.text.trim() != value.trim()
+                    return state.password.trim() != value.trim()
                         ? 'Passwords do not match'
                         : null;
                   },
                   autovalidateMode: AutovalidateMode.always,
                   obscureText: true,
+                  onChanged: (value) =>
+                      context.read<RegisterCubit>().setRepeatPassword(value),
                   onFieldSubmitted: (_) => submit(),
                 ),
                 const SizedBox(height: 15),
-                if (result?.isLoading == true)
+                if (state.status == RegisterFormStatus.inProgress)
                   const Center(child: CircularProgressIndicator())
-                else if (result?.data != null)
-                  const Center(
-                    child: CircularProgressIndicator(color: Colors.green),
-                  )
                 else
                   ElevatedButton(
-                    onPressed: () => submit(),
+                    onPressed: () => context.read<RegisterCubit>().submit(),
                     child: const Text('Register'),
                   ),
                 const SizedBox(height: 10),
@@ -167,9 +136,9 @@ class _RegisterFormState extends State<RegisterForm> {
                   child: const Text('Login here'),
                 ),
               ],
-            ),
-          );
-        },
+            );
+          },
+        ),
       );
 }
 
