@@ -1,8 +1,11 @@
 export 'models/models.dart';
+export 'mutations.dart';
 
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:task_helper/src/cubit/auth_cubit.dart';
 import 'package:task_helper/src/models/token.dart';
+
+import 'mutations.dart';
 
 GraphQLClient _getRefreshClient(AuthCubit authCubit, String gqlUrl) {
   final apiLink = HttpLink(gqlUrl);
@@ -59,49 +62,3 @@ GraphQLClient getGqlClient(AuthCubit authCubit, String gqlUrl) {
     cache: GraphQLCache(),
   );
 }
-
-const registerMutation = r'''
-mutation Register($signupInput: SignupInput!) {
-  signup(signupInput: $signupInput) {
-    access_token,
-    refresh_token
-  }
-}
-''';
-
-const loginMutation = r'''
-mutation Login($loginInput: LoginInput!) {
-  login(loginInput: $loginInput) {
-    access_token,
-    refresh_token
-  }
-}
-''';
-
-const refreshMutation = r'''
-mutation Refresh {
-  refreshAccessToken {
-    access_token
-  }
-}
-''';
-
-const usersQuery = r'''
-query GetUsers {
-  users {
-    id,
-    username,
-    email
-  }
-}
-''';
-
-const userQuery = r'''
-query GetUser($id: ID!) {
-  user(id: $id) {
-    id,
-    username,
-    email
-  }
-}
-''';

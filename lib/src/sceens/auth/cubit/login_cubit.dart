@@ -18,11 +18,17 @@ class LoginCubit extends Cubit<LoginState> {
   }) : super(const LoginState());
 
   void setUsername(String value) {
-    emit(state.copyWith(username: value));
+    emit(state.copyWith(
+      status: LoginFormStatus.none,
+      username: value,
+    ));
   }
 
   void setPassword(String value) {
-    emit(state.copyWith(password: value));
+    emit(state.copyWith(
+      status: LoginFormStatus.none,
+      password: value,
+    ));
   }
 
   Future<void> submit() async {

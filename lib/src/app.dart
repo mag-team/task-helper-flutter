@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:task_helper/src/cubit/auth_cubit.dart';
+import 'package:task_helper/src/cubit/workspaces_cubit.dart';
 import 'package:task_helper/src/task_repository.dart';
 
 import 'sceens/auth/auth_screen.dart';
-import 'sceens/home/home_screen.dart';
+import 'sceens/dashboard/dashboard_screen.dart';
 
 class App extends StatelessWidget {
   final TaskRepository taskRepository;
@@ -24,6 +25,8 @@ class App extends StatelessWidget {
           child: MaterialApp(
             title: 'Task Helper',
             theme: ThemeData(
+              scaffoldBackgroundColor: Color.alphaBlend(
+                  Colors.blue.withAlpha(15), Colors.grey.shade200),
               inputDecorationTheme: const InputDecorationTheme(
                 border: OutlineInputBorder(),
               ),
@@ -49,7 +52,12 @@ class App extends StatelessWidget {
                 if (state is AuthInitial) return const AuthScreen();
 
                 if (state is AuthSuccess && !state.refreshToken.isExpired) {
-                  return const HomeScreen();
+                  return BlocProvider(
+                    create: (context) => WorkspacesCubit(
+                      context.read<TaskRepository>(),
+                    ),
+                    child: const DashboardScreen(),
+                  );
                 }
 
                 return const Scaffold(

@@ -18,19 +18,31 @@ class RegisterCubit extends Cubit<RegisterState> {
   }) : super(const RegisterState());
 
   void setUsername(String value) {
-    emit(state.copyWith(username: value));
+    emit(state.copyWith(
+      status: RegisterFormStatus.none,
+      username: value,
+    ));
   }
 
   void setEmail(String value) {
-    emit(state.copyWith(email: value));
+    emit(state.copyWith(
+      status: RegisterFormStatus.none,
+      email: value,
+    ));
   }
 
   void setPassword(String value) {
-    emit(state.copyWith(password: value));
+    emit(state.copyWith(
+      status: RegisterFormStatus.none,
+      password: value,
+    ));
   }
 
   void setRepeatPassword(String value) {
-    emit(state.copyWith(repeatPassword: value));
+    emit(state.copyWith(
+      status: RegisterFormStatus.none,
+      repeatPassword: value,
+    ));
   }
 
   Future<void> submit() async {
