@@ -48,7 +48,7 @@ class WorkspaceView extends StatelessWidget {
                   children: [
                     Text(
                       ws.title,
-                      style: Theme.of(context).textTheme.headline5,
+                      style: Theme.of(context).textTheme.headline4,
                     ),
                     ElevatedButton.icon(
                       onPressed: () {},

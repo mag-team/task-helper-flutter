@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:task_helper/src/cubit/workspaces_cubit.dart';
 import 'package:task_helper/src/models/workspace.dart';
+import 'package:task_helper/src/task_repository.dart';
+import 'package:task_helper/src/workspace/create_workspace_form.dart';
+import 'package:task_helper/src/workspace/cubit/create_workspace_cubit.dart';
 
 import 'cubit/workspace_selector_cubit.dart';
 
@@ -27,7 +30,16 @@ class SideBar extends StatelessWidget {
                     tooltip: 'New Workspace',
                     child: const Icon(Icons.add),
                     primaryColor: Colors.green.shade300,
-                    onPressed: () {},
+                    onPressed: () => showDialog(
+                      context: context,
+                      builder: (_) => BlocProvider(
+                        create: (_) => CreateWorkspaceCubit(
+                          context.read<TaskRepository>(),
+                          context.read<WorkspacesCubit>(),
+                        ),
+                        child: const CreateWorkspaceForm(),
+                      ),
+                    ),
                   );
                 }
 

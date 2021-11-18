@@ -1,5 +1,6 @@
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:task_helper/src/graphql/graphql.dart';
+import 'package:task_helper/src/models/task.dart';
 import 'package:task_helper/src/models/user.dart';
 import 'package:task_helper/src/models/workspace.dart';
 
@@ -83,5 +84,18 @@ class TaskRepository {
     if (res.hasException) throw Exception(res.exception!.toString());
 
     return Workspace.fromJson(res.data!['workspace']);
+  }
+
+  Future<Task> createTask(CreateTaskInput createTaskInput) async {
+    final opt = MutationOptions(
+      document: gql(createTaskMutation),
+      variables: {'createTaskInput': createTaskInput.toMap()},
+    );
+
+    final res = await graphQLClient.mutate(opt);
+
+    if (res.hasException) throw Exception(res.exception!.toString());
+
+    return Task.fromJson(res.data!['createTask']);
   }
 }

@@ -24,4 +24,10 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
       emit(const WorkspacesError('Something went wrong'));
     }
   }
+
+  void addWorkspace(Workspace workspace) {
+    final wList = List.of((state as WorkspacesLoaded).workspaces)
+      ..add(workspace);
+    emit(WorkspacesLoaded(wList));
+  }
 }

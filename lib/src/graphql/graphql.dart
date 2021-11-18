@@ -1,11 +1,11 @@
 export 'models/models.dart';
-export 'mutations.dart';
+export 'documents.dart';
 
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:task_helper/src/cubit/auth_cubit.dart';
 import 'package:task_helper/src/models/token.dart';
 
-import 'mutations.dart';
+import 'documents.dart';
 
 GraphQLClient _getRefreshClient(AuthCubit authCubit, String gqlUrl) {
   final apiLink = HttpLink(gqlUrl);

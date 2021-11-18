@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:task_helper/src/cubit/auth_cubit.dart';
-import 'package:task_helper/src/sceens/auth/cubit/register_cubit.dart';
+import 'package:task_helper/src/form_status.dart';
 import 'package:task_helper/src/task_repository.dart';
 
 import 'auth_card.dart';
+import 'cubit/register_cubit.dart';
 
 class RegisterForm extends StatelessWidget {
   const RegisterForm({Key? key}) : super(key: key);
@@ -17,7 +18,7 @@ class RegisterForm extends StatelessWidget {
         ),
         child: BlocConsumer<RegisterCubit, RegisterState>(
           listener: (context, state) {
-            if (state.status == RegisterFormStatus.failed) {
+            if (state.status == FormStatus.failed) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text('Failed to register'),
@@ -28,7 +29,7 @@ class RegisterForm extends StatelessWidget {
           },
           builder: (context, state) {
             void submit() {
-              if (state.status == RegisterFormStatus.inProgress ||
+              if (state.status == FormStatus.inProgress ||
                   !usernameRegex.hasMatch(state.username) ||
                   !emailRegex.hasMatch(state.email) ||
                   !passwordRegex.hasMatch(state.password) ||
@@ -122,7 +123,7 @@ class RegisterForm extends StatelessWidget {
                   onFieldSubmitted: (_) => submit(),
                 ),
                 const SizedBox(height: 15),
-                if (state.status == RegisterFormStatus.inProgress)
+                if (state.status == FormStatus.inProgress)
                   const Center(child: CircularProgressIndicator())
                 else
                   ElevatedButton(

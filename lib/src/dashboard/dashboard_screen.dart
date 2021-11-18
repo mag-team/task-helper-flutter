@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:task_helper/src/workspace/workspace_view.dart';
 
 import 'cubit/workspace_selector_cubit.dart';
 import 'profile_dialog.dart';
 import 'side_bar.dart';
-import 'workspace_view.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({Key? key}) : super(key: key);

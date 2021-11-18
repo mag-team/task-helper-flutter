@@ -27,6 +27,14 @@ class ProfileDialog extends StatelessWidget {
                       children: [
                         const Icon(Icons.error),
                         Text(state.error, style: textTheme.subtitle1),
+                        const SizedBox(height: 10),
+                        TextButton(
+                          onPressed: () => context.read<AuthCubit>().logout(),
+                          child: const Text('Logout'),
+                          style: TextButton.styleFrom(
+                            primary: Colors.red,
+                          ),
+                        ),
                       ],
                     );
                   }

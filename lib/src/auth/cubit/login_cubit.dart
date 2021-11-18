@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:task_helper/src/cubit/auth_cubit.dart';
+import 'package:task_helper/src/form_status.dart';
 import 'package:task_helper/src/graphql/graphql.dart';
 import 'package:task_helper/src/models/token.dart';
 import 'package:task_helper/src/task_repository.dart';
@@ -18,21 +19,15 @@ class LoginCubit extends Cubit<LoginState> {
   }) : super(const LoginState());
 
   void setUsername(String value) {
-    emit(state.copyWith(
-      status: LoginFormStatus.none,
-      username: value,
-    ));
+    emit(state.copyWith(username: value));
   }
 
   void setPassword(String value) {
-    emit(state.copyWith(
-      status: LoginFormStatus.none,
-      password: value,
-    ));
+    emit(state.copyWith(password: value));
   }
 
   Future<void> submit() async {
-    emit(state.copyWith(status: LoginFormStatus.inProgress));
+    emit(state.copyWith(status: FormStatus.inProgress));
 
     try {
       final tokens = await taskRepository.login(LoginInput(
@@ -40,11 +35,11 @@ class LoginCubit extends Cubit<LoginState> {
         password: state.password,
       ));
 
-      emit(state.copyWith(status: LoginFormStatus.success));
+      emit(state.copyWith(status: FormStatus.success));
       authCubit.login(Token(tokens.refreshToken), Token(tokens.accessToken));
     } catch (e) {
       debugPrint(e.toString());
-      emit(state.copyWith(status: LoginFormStatus.failed));
+      emit(state.copyWith(status: FormStatus.failed));
     }
   }
 }

@@ -14,7 +14,7 @@ class Token {
   DateTime get exp =>
       _exp ??= DateTime.fromMillisecondsSinceEpoch(payload['exp'] * 1000);
 
-  bool get isExpired => _exp?.isBefore(DateTime.now()) == true;
+  bool get isExpired => exp.isBefore(DateTime.now());
 
   Token(this.token);
 

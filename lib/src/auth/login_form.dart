@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:task_helper/src/cubit/auth_cubit.dart';
-import 'package:task_helper/src/sceens/auth/cubit/login_cubit.dart';
+import 'package:task_helper/src/form_status.dart';
 import 'package:task_helper/src/task_repository.dart';
 
 import 'auth_card.dart';
+import 'cubit/login_cubit.dart';
 
 class LoginForm extends StatelessWidget {
   const LoginForm({Key? key}) : super(key: key);
@@ -17,7 +18,7 @@ class LoginForm extends StatelessWidget {
         ),
         child: BlocConsumer<LoginCubit, LoginState>(
           listener: (context, state) {
-            if (state.status == LoginFormStatus.failed) {
+            if (state.status == FormStatus.failed) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text('Failed to login'),
@@ -72,9 +73,9 @@ class LoginForm extends StatelessWidget {
                   },
                 ),
                 const SizedBox(height: 15),
-                if (state.status == LoginFormStatus.inProgress)
+                if (state.status == FormStatus.inProgress)
                   const Center(child: CircularProgressIndicator())
-                else if (state.status == LoginFormStatus.success)
+                else if (state.status == FormStatus.success)
                   const Center(
                     child: CircularProgressIndicator(color: Colors.green),
                   )

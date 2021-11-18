@@ -1,16 +1,14 @@
 part of 'register_cubit.dart';
 
-enum RegisterFormStatus { none, inProgress, failed, success }
-
 class RegisterState extends Equatable {
-  final RegisterFormStatus status;
+  final FormStatus status;
   final String username;
   final String email;
   final String password;
   final String repeatPassword;
 
   const RegisterState({
-    this.status = RegisterFormStatus.none,
+    this.status = FormStatus.none,
     this.username = '',
     this.email = '',
     this.password = '',
@@ -18,14 +16,14 @@ class RegisterState extends Equatable {
   });
 
   RegisterState copyWith({
-    RegisterFormStatus? status,
+    FormStatus status = FormStatus.none,
     String? username,
     String? email,
     String? password,
     String? repeatPassword,
   }) =>
       RegisterState(
-        status: status ?? this.status,
+        status: status,
         username: username ?? this.username,
         email: email ?? this.email,
         password: password ?? this.password,
