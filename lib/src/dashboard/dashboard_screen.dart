@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:task_helper/src/cubit/auth_cubit.dart';
+import 'package:task_helper/src/util/color_util.dart';
+import 'package:task_helper/src/workspace/workspace_list_bar.dart';
 import 'package:task_helper/src/workspace/workspace_view.dart';
 
 import 'cubit/workspace_selector_cubit.dart';
 import 'profile_dialog.dart';
-import 'side_bar.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({Key? key}) : super(key: key);
@@ -19,7 +21,7 @@ class DashboardScreen extends StatelessWidget {
               Expanded(
                 child: Row(
                   children: [
-                    const SideBar(),
+                    const WorkspaceListBar(),
                     Expanded(
                       child: BlocBuilder<WorkspaceSelectorCubit, String?>(
                         builder: (context, state) {
@@ -53,7 +55,8 @@ class TopBar extends StatelessWidget {
             children: [
               InkWell(
                 hoverColor: Colors.transparent,
-                onTap: () => context.read<WorkspaceSelectorCubit>().emit(null),
+                onTap: () =>
+                    context.read<WorkspaceSelectorCubit>().setWorkspace(null),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 15,
@@ -76,7 +79,10 @@ class TopBar extends StatelessWidget {
                       type: MaterialType.button,
                       borderRadius: BorderRadius.circular(50),
                       clipBehavior: Clip.antiAlias,
-                      color: Colors.blue,
+                      color: ColorUtil.genRandomColor(
+                          (context.read<AuthCubit>().state as AuthSuccess)
+                              .userId
+                              .hashCode),
                       child: InkWell(
                         onTap: () => showDialog(
                           context: context,

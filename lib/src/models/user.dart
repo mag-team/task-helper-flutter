@@ -5,7 +5,11 @@ class User extends Equatable {
   final String username;
   final String email;
 
-  const User(this.id, this.username, this.email);
+  const User({
+    required this.id,
+    required this.username,
+    required this.email,
+  });
 
   User.fromJson(Map<String, dynamic> map)
       : id = map['id'],

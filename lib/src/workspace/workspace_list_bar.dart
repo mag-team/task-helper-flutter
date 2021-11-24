@@ -3,13 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:task_helper/src/cubit/workspaces_cubit.dart';
 import 'package:task_helper/src/models/workspace.dart';
 import 'package:task_helper/src/task_repository.dart';
+import 'package:task_helper/src/util/color_util.dart';
 import 'package:task_helper/src/workspace/create_workspace_form.dart';
 import 'package:task_helper/src/workspace/cubit/create_workspace_cubit.dart';
 
-import 'cubit/workspace_selector_cubit.dart';
+import '../dashboard/cubit/workspace_selector_cubit.dart';
 
-class SideBar extends StatelessWidget {
-  const SideBar({Key? key}) : super(key: key);
+class WorkspaceListBar extends StatelessWidget {
+  const WorkspaceListBar({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -46,8 +47,10 @@ class SideBar extends StatelessWidget {
                 return SidebarButton(
                   tooltip: ws[index].title,
                   child: Text(ws[index].title.characters.first),
-                  onPressed: () =>
-                      context.read<WorkspaceSelectorCubit>().emit(ws[index].id),
+                  primaryColor: ColorUtil.genRandomColor(ws[index].id.hashCode),
+                  onPressed: () => context
+                      .read<WorkspaceSelectorCubit>()
+                      .setWorkspace(ws[index].id),
                   isSelected: ws[index].id ==
                       context.watch<WorkspaceSelectorCubit>().state,
                 );

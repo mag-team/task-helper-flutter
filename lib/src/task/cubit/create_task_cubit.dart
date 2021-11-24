@@ -1,21 +1,21 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
-import 'package:task_helper/src/cubit/workspaces_cubit.dart';
 import 'package:task_helper/src/form_status.dart';
 import 'package:task_helper/src/graphql/graphql.dart';
 import 'package:task_helper/src/task_repository.dart';
+import 'package:task_helper/src/workspace/cubit/workspace_cubit.dart';
 
-part 'create_workspace_state.dart';
+part 'create_task_state.dart';
 
-class CreateWorkspaceCubit extends Cubit<CreateWorkspaceState> {
+class CreateTaskCubit extends Cubit<CreateTaskState> {
   final TaskRepository taskRepository;
-  final WorkspacesCubit workspacesCubit;
+  final WorkspaceCubit workspaceCubit;
 
-  CreateWorkspaceCubit(
+  CreateTaskCubit(
     this.taskRepository,
-    this.workspacesCubit,
-  ) : super(const CreateWorkspaceState());
+    this.workspaceCubit,
+  ) : super(const CreateTaskState());
 
   void setTitle(String value) {
     emit(state.copyWith(title: value));
@@ -25,9 +25,12 @@ class CreateWorkspaceCubit extends Cubit<CreateWorkspaceState> {
     emit(state.copyWith(status: FormStatus.inProgress));
 
     try {
-      final workspace = await taskRepository
-          .createWorkspace(CreateWorkspaceInput(title: state.title));
-      workspacesCubit.addWorkspace(workspace);
+      final task = await taskRepository.createTask(CreateTaskInput(
+        title: state.title,
+        workspace: workspaceCubit.workspaceId,
+      ));
+
+      workspaceCubit.addTask(task);
       emit(state.copyWith(status: FormStatus.success));
     } catch (e) {
       debugPrint(e.toString());

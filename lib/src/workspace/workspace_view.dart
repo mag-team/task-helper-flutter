@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:task_helper/src/task/create_task_form.dart';
+import 'package:task_helper/src/task/cubit/create_task_cubit.dart';
+import 'package:task_helper/src/task/task_card.dart';
 import 'package:task_helper/src/task_repository.dart';
 
 import 'cubit/workspace_cubit.dart';
@@ -44,14 +47,29 @@ class WorkspaceView extends StatelessWidget {
               padding: const EdgeInsets.all(15),
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      ws.title,
-                      style: Theme.of(context).textTheme.headline4,
+                    Expanded(
+                      child: Tooltip(
+                        message: ws.title,
+                        child: Text(
+                          ws.title,
+                          style: Theme.of(context).textTheme.headline4,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
                     ),
                     ElevatedButton.icon(
-                      onPressed: () {},
+                      onPressed: () => showDialog(
+                        context: context,
+                        builder: (_) => BlocProvider(
+                          create: (_) => CreateTaskCubit(
+                            context.read<TaskRepository>(),
+                            context.read<WorkspaceCubit>(),
+                          ),
+                          child: const CreateTaskForm(),
+                        ),
+                      ),
                       icon: const Icon(Icons.add),
                       label: const Text('New Task'),
                       style: ElevatedButton.styleFrom(
@@ -62,14 +80,13 @@ class WorkspaceView extends StatelessWidget {
                   ],
                 ),
                 GridView.extent(
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.symmetric(vertical: 20),
                   maxCrossAxisExtent: 300,
                   shrinkWrap: true,
-                  children: [
-                    Column(
-                      children: ws.tasks!.map((e) => const Card()).toList(),
-                    ),
-                  ],
+                  children: ws.tasks!.map((e) => TaskCard(task: e)).toList(),
+                  childAspectRatio: 3,
+                  mainAxisSpacing: 5,
+                  crossAxisSpacing: 5,
                 ),
               ],
             );
