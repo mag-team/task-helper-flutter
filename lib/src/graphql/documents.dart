@@ -1,3 +1,37 @@
+const _fullWorkspace = r'''
+id
+owner {
+  id, username, email
+}
+title
+description
+members {
+  id, username, email
+}
+tasks {
+  id, title, workspace, parentTask
+}
+properties {
+  name, type, values
+}
+''';
+
+const _fullUser = r'''
+id
+username
+email
+''';
+
+const _fullTask = r'''
+id
+title
+workspace
+parentTask
+properties {
+  name, value
+}
+''';
+
 const registerMutation = r'''
 mutation Register($signupInput: SignupInput!) {
   signup(signupInput: $signupInput) {
@@ -24,58 +58,34 @@ mutation Refresh {
 }
 ''';
 
-const usersQuery = r'''
+const usersQuery = '''
 query GetUsers {
   users {
-    id
-    username
-    email
+    $_fullUser
   }
 }
 ''';
 
-const userQuery = r'''
-query GetUser($id: ID!) {
-  user(id: $id) {
-    id
-    username
-    email
+const userQuery = '''
+query GetUser(\$id: ID!) {
+  user(id: \$id) {
+    $_fullUser
   }
 }
 ''';
 
-const createWorkspaceMutation = r'''
-mutation CreateWorkspace($createWorkspaceInput: CreateWorkspaceInput!) {
-  createWorkspace(createWorkspaceInput: $createWorkspaceInput) {
-    id
-    owner {
-      id, username, email
-    }
-    title
-    members {
-      id, username, email
-    }
-    tasks {
-      id, title, workspace, parentTask
-    }
+const createWorkspaceMutation = '''
+mutation CreateWorkspace(\$createWorkspaceInput: CreateWorkspaceInput!) {
+  createWorkspace(createWorkspaceInput: \$createWorkspaceInput) {
+    $_fullWorkspace
   }
 }
 ''';
 
-const updateWorkspaceMutation = r'''
-mutation UpdateWorkspace($updateWorkspaceInput: UpdateWorkspaceInput!) {
-  updateWorkspace(updateWorkspaceInput: $updateWorkspaceInput) {
-    id
-    owner {
-      id, username, email
-    }
-    title
-    members {
-      id, username, email
-    }
-    tasks {
-      id, title, workspace, parentTask
-    }
+const updateWorkspaceMutation = '''
+mutation UpdateWorkspace(\$updateWorkspaceInput: UpdateWorkspaceInput!) {
+  updateWorkspace(updateWorkspaceInput: \$updateWorkspaceInput) {
+    $_fullWorkspace
   }
 }
 ''';
@@ -88,38 +98,58 @@ mutation RemoveWorkspace($id: ID!) {
 }
 ''';
 
-const addMemberMutation = r'''
-mutation AddMember($addMemberInput: AddMemberInput!) {
-  addMember(addMemberInput: $addMemberInput) {
-    id
-    owner {
-      id, username, email
-    }
-    title
-    members {
-      id, username, email
-    }
-    tasks {
-      id, title, workspace, parentTask
-    }
+const addMemberMutation = '''
+mutation AddMember(\$addMemberInput: AddMemberInput!) {
+  addMember(addMemberInput: \$addMemberInput) {
+    $_fullWorkspace
   }
 }
 ''';
 
-const removeMemberMutation = r'''
-mutation RemoveMember($removeMemberInput: RemoveMemberInput!) {
-  removeMember(removeMemberInput: $removeMemberInput) {
-    id
-    owner {
-      id, username, email
-    }
-    title
-    members {
-      id, username, email
-    }
-    tasks {
-      id, title, workspace, parentTask
-    }
+const removeMemberMutation = '''
+mutation RemoveMember(\$removeMemberInput: RemoveMemberInput!) {
+  removeMember(removeMemberInput: \$removeMemberInput) {
+    $_fullWorkspace
+  }
+}
+''';
+
+const addWorkspacePropertyMutation = '''
+mutation AddWorkspaceProperty(\$addWorkspacePropertyInput: AddWorkspacePropertyInput!) {
+  addWorkspaceProperty(addWorkspacePropertyInput: \$addWorkspacePropertyInput) {
+    $_fullWorkspace
+  }
+}
+''';
+
+const removeWorkspacePropertyMutation = '''
+mutation RemoveWorkspaceProperty(\$removeWorkspacePropertyInput: RemoveWorkspacePropertyInput!) {
+  removeWorkspaceProperty(removeWorkspacePropertyInput: \$removeWorkspacePropertyInput) {
+    $_fullWorkspace
+  }
+}
+''';
+
+const updateWorkspacePropertyMutation = '''
+mutation UpdateWorkspaceProperty(\$updateWorkspacePropertyInput: UpdateWorkspacePropertyInput!) {
+  updateWorkspaceProperty(updateWorkspacePropertyInput: \$updateWorkspacePropertyInput) {
+    $_fullWorkspace
+  }
+}
+''';
+
+const addValueToWorkspacePropertyMutation = '''
+mutation AddValueToWorkspaceProperty(\$addValueToWorkspacePropertyInput: AddValueToWorkspacePropertyInput!) {
+  addValueToWorkspaceProperty(addValueToWorkspacePropertyInput: \$addValueToWorkspacePropertyInput) {
+    $_fullWorkspace
+  }
+}
+''';
+
+const removeValueFromWorkspacePropertyMutation = '''
+mutation RemoveValueFromWorkspaceProperty(\$removeValueFromWorkspacePropertyInput: RemoveValueFromWorkspacePropertyInput!) {
+  removeValueFromWorkspaceProperty(removeValueFromWorkspacePropertyInput: \$removeValueFromWorkspacePropertyInput) {
+    $_fullWorkspace
   }
 }
 ''';
@@ -133,42 +163,34 @@ query GetWorkspaces {
 }
 ''';
 
-const workspaceQuery = r'''
-query GetWorkspace($id: ID!) {
-  workspace(id: $id) {
-    id
-    owner {
-      id, username, email
-    }
-    title
-    members {
-      id, username, email
-    }
-    tasks {
-      id, title, workspace, parentTask
-    }
+const workspaceQuery = '''
+query GetWorkspace(\$id: ID!) {
+  workspace(id: \$id) {
+    $_fullWorkspace
   }
 }
 ''';
 
-const createTaskMutation = r'''
-mutation CreateTask($createTaskInput: CreateTaskInput!) {
-  createTask(createTaskInput: $createTaskInput) {
-    id
-    title
-    workspace
-    parentTask
+const createTaskMutation = '''
+mutation CreateTask(\$createTaskInput: CreateTaskInput!) {
+  createTask(createTaskInput: \$createTaskInput) {
+    $_fullTask
   }
 }
 ''';
 
-const updateTaskMutation = r'''
-mutation UpdateTask($updateTaskInput: UpdateTaskInput!) {
-  updateTask(updateTaskInput: $updateTaskInput) {
-    id
-    title
-    workspace
-    parentTask
+const updateTaskMutation = '''
+mutation UpdateTask(\$updateTaskInput: UpdateTaskInput!) {
+  updateTask(updateTaskInput: \$updateTaskInput) {
+    $_fullTask
+  }
+}
+''';
+
+const updateTaskPropertyMutation = '''
+mutation UpdateTaskProperty(\$updateTaskPropertyInput: UpdateTaskPropertyInput!) {
+  updateTaskProperty(updateTaskPropertyInput: \$updateTaskPropertyInput) {
+    $_fullTask
   }
 }
 ''';
@@ -181,13 +203,10 @@ mutation RemoveTask($id: ID!) {
 }
 ''';
 
-const taskQuery = r'''
-query GetTask($id: ID!) {
-  task(id: $id) {
-    id
-    title
-    workspace
-    parentTask
+const taskQuery = '''
+query GetTask(\$id: ID!) {
+  task(id: \$id) {
+    $_fullTask
   }
 }
 ''';

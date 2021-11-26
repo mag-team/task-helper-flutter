@@ -7,7 +7,7 @@ class LoginInput {
     required this.password,
   });
 
-  Map<String, dynamic> toMap() => {
+  Map<String, dynamic> toJson() => {
         'username': username,
         'password': password,
       };

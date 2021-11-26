@@ -49,7 +49,10 @@ GraphQLClient getGqlClient(AuthCubit authCubit, String gqlUrl) {
         document: gql(refreshMutation),
       ));
 
-      if (res.hasException) return null;
+      if (res.hasException) {
+        if (res.exception!.graphqlErrors.isNotEmpty) authCubit.logout();
+        return null;
+      }
 
       final newToken = Token(res.data!['refreshAccessToken']['access_token']);
       authCubit.refreshToken(newToken);

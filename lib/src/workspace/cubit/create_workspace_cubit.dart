@@ -21,12 +21,19 @@ class CreateWorkspaceCubit extends Cubit<CreateWorkspaceState> {
     emit(state.copyWith(title: value));
   }
 
+  void setDescription(String value) {
+    emit(state.copyWith(description: value));
+  }
+
   Future<void> submit() async {
     emit(state.copyWith(status: FormStatus.inProgress));
 
     try {
-      final workspace = await taskRepository
-          .createWorkspace(CreateWorkspaceInput(title: state.title));
+      final workspace =
+          await taskRepository.createWorkspace(CreateWorkspaceInput(
+        title: state.title,
+        description: state.description.isNotEmpty ? state.description : null,
+      ));
       workspacesCubit.addWorkspace(workspace);
       emit(state.copyWith(status: FormStatus.success));
     } catch (e) {

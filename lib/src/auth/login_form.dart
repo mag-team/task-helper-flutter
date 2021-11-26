@@ -45,6 +45,7 @@ class LoginForm extends StatelessWidget {
                     labelText: 'Username',
                     prefixIcon: Icon(Icons.person),
                   ),
+                  textInputAction: TextInputAction.next,
                   onChanged: (value) =>
                       context.read<LoginCubit>().setUsername(value),
                   onFieldSubmitted: (_) {

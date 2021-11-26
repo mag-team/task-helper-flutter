@@ -9,7 +9,7 @@ class UpdateTaskInput {
     this.parentTask,
   });
 
-  Map<String, dynamic> toMap() => {
+  Map<String, dynamic> toJson() => {
         'id': id,
         if (title != null) 'title': title,
         if (parentTask != null) 'parentTask': parentTask,

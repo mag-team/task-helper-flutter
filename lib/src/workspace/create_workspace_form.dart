@@ -43,6 +43,19 @@ class CreateWorkspaceForm extends StatelessWidget {
                       onFieldSubmitted: (_) => submit(),
                     ),
                     const SizedBox(height: 10),
+                    TextFormField(
+                      initialValue: state.description,
+                      decoration: const InputDecoration(
+                        labelText: 'Description',
+                      ),
+                      minLines: 5,
+                      maxLines: 5,
+                      onChanged: (value) => context
+                          .read<CreateWorkspaceCubit>()
+                          .setDescription(value.trim()),
+                      onFieldSubmitted: (_) => submit(),
+                    ),
+                    const SizedBox(height: 10),
                     if (state.status == FormStatus.inProgress)
                       const Center(child: CircularProgressIndicator())
                     else

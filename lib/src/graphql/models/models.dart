@@ -1,7 +1,7 @@
 export 'login_input.dart';
 export 'signup_input.dart';
 export 'tokens.dart';
-export 'user_update.dart';
+export 'update_user_input.dart';
 export 'create_workspace_input.dart';
 export 'update_workspace_input.dart';
 export 'add_member_input.dart';

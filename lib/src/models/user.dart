@@ -11,10 +11,10 @@ class User extends Equatable {
     required this.email,
   });
 
-  User.fromJson(Map<String, dynamic> map)
-      : id = map['id'],
-        username = map['username'],
-        email = map['email'];
+  User.fromJson(Map<String, dynamic> json)
+      : id = json['id'],
+        username = json['username'],
+        email = json['email'];
 
   @override
   List<Object?> get props => [id, username, email];

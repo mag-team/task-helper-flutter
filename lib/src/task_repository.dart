@@ -12,7 +12,7 @@ class TaskRepository {
   Future<Tokens> register(SignupInput signupInput) async {
     final opt = MutationOptions(
       document: gql(registerMutation),
-      variables: {'signupInput': signupInput.toMap()},
+      variables: {'signupInput': signupInput.toJson()},
     );
 
     final res = await graphQLClient.mutate(opt);
@@ -25,7 +25,7 @@ class TaskRepository {
   Future<Tokens> login(LoginInput loginInput) async {
     final opt = MutationOptions(
       document: gql(loginMutation),
-      variables: {'loginInput': loginInput.toMap()},
+      variables: {'loginInput': loginInput.toJson()},
     );
 
     final res = await graphQLClient.mutate(opt);
@@ -51,7 +51,7 @@ class TaskRepository {
   Future<Workspace> createWorkspace(CreateWorkspaceInput input) async {
     final opt = MutationOptions(
       document: gql(createWorkspaceMutation),
-      variables: {'createWorkspaceInput': input.toMap()},
+      variables: {'createWorkspaceInput': input.toJson()},
     );
 
     final res = await graphQLClient.mutate(opt);
@@ -89,7 +89,7 @@ class TaskRepository {
   Future<Task> createTask(CreateTaskInput createTaskInput) async {
     final opt = MutationOptions(
       document: gql(createTaskMutation),
-      variables: {'createTaskInput': createTaskInput.toMap()},
+      variables: {'createTaskInput': createTaskInput.toJson()},
     );
 
     final res = await graphQLClient.mutate(opt);

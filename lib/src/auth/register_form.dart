@@ -59,6 +59,7 @@ class RegisterForm extends StatelessWidget {
                         ? null
                         : 'Username invalid';
                   },
+                  textInputAction: TextInputAction.next,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   autofocus: true,
                   onChanged: (value) =>
@@ -78,6 +79,7 @@ class RegisterForm extends StatelessWidget {
                         ? null
                         : 'Email invalid';
                   },
+                  textInputAction: TextInputAction.next,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   keyboardType: TextInputType.emailAddress,
                   onChanged: (value) =>
@@ -97,6 +99,7 @@ class RegisterForm extends StatelessWidget {
                         ? null
                         : 'Password invalid';
                   },
+                  textInputAction: TextInputAction.next,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   obscureText: true,
                   onChanged: (value) =>

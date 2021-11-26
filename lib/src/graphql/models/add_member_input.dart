@@ -7,7 +7,7 @@ class AddMemberInput {
     required this.userId,
   });
 
-  Map<String, dynamic> toMap() => {
+  Map<String, dynamic> toJson() => {
         'id': id,
         'userId': userId,
       };

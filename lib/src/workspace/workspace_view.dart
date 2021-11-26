@@ -44,19 +44,37 @@ class WorkspaceView extends StatelessWidget {
             final ws = state.workspace;
 
             return ListView(
-              padding: const EdgeInsets.all(15),
+              padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
               children: [
                 Row(
                   children: [
                     Expanded(
-                      child: Tooltip(
-                        message: ws.title,
-                        child: Text(
-                          ws.title,
-                          style: Theme.of(context).textTheme.headline4,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            ws.title,
+                            style: Theme.of(context).textTheme.headline4,
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            ws.description?.isNotEmpty == true
+                                ? ws.description!
+                                : 'No description',
+                            style: Theme.of(context)
+                                .textTheme
+                                .subtitle1
+                                ?.copyWith(
+                                  color: ws.description?.isNotEmpty == true
+                                      ? null
+                                      : Colors.grey,
+                                  fontStyle: ws.description?.isNotEmpty == true
+                                      ? null
+                                      : FontStyle.italic,
+                                ),
+                          ),
+                        ],
                       ),
                     ),
                     ElevatedButton.icon(
@@ -76,17 +94,21 @@ class WorkspaceView extends StatelessWidget {
                         padding: const EdgeInsets.all(15),
                         primary: Colors.green,
                       ),
-                    )
+                    ),
+                    const SizedBox(width: 10),
+                    PopupMenuButton(
+                      itemBuilder: (context) => [],
+                    ),
                   ],
                 ),
                 GridView.extent(
                   padding: const EdgeInsets.symmetric(vertical: 20),
-                  maxCrossAxisExtent: 300,
+                  maxCrossAxisExtent: 250,
                   shrinkWrap: true,
                   children: ws.tasks!.map((e) => TaskCard(task: e)).toList(),
                   childAspectRatio: 3,
-                  mainAxisSpacing: 5,
-                  crossAxisSpacing: 5,
+                  mainAxisSpacing: 8,
+                  crossAxisSpacing: 8,
                 ),
               ],
             );

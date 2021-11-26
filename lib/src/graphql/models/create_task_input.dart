@@ -9,7 +9,7 @@ class CreateTaskInput {
     this.parentTask,
   });
 
-  Map<String, dynamic> toMap() => {
+  Map<String, dynamic> toJson() => {
         'title': title,
         'workspace': workspace,
         if (parentTask != null) 'parentTask': parentTask,

@@ -14,8 +14,9 @@ class CreateTaskCubit extends Cubit<CreateTaskState> {
 
   CreateTaskCubit(
     this.taskRepository,
-    this.workspaceCubit,
-  ) : super(const CreateTaskState());
+    this.workspaceCubit, {
+    String? parentTask,
+  }) : super(CreateTaskState(parentTask: parentTask));
 
   void setTitle(String value) {
     emit(state.copyWith(title: value));
@@ -28,6 +29,7 @@ class CreateTaskCubit extends Cubit<CreateTaskState> {
       final task = await taskRepository.createTask(CreateTaskInput(
         title: state.title,
         workspace: workspaceCubit.workspaceId,
+        parentTask: state.parentTask,
       ));
 
       workspaceCubit.addTask(task);

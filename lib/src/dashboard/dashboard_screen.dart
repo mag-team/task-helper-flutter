@@ -25,6 +25,7 @@ class DashboardScreen extends StatelessWidget {
                     Expanded(
                       child: BlocBuilder<WorkspaceSelectorCubit, String?>(
                         builder: (context, state) {
+                          // TODO Implement home screen
                           if (state == null) return const SizedBox.shrink();
 
                           return WorkspaceView(

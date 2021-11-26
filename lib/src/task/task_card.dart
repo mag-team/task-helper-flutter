@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:task_helper/src/models/task.dart';
 import 'package:task_helper/src/task/task_dialog.dart';
+import 'package:task_helper/src/workspace/cubit/workspace_cubit.dart';
 
 class TaskCard extends StatelessWidget {
   final Task task;
@@ -14,11 +16,15 @@ class TaskCard extends StatelessWidget {
   Widget build(BuildContext context) => Tooltip(
         message: task.title,
         child: Card(
+          margin: EdgeInsets.zero,
           clipBehavior: Clip.hardEdge,
           child: InkWell(
             onTap: () => showDialog(
               context: context,
-              builder: (context) => TaskDialog(task: task),
+              builder: (_) => BlocProvider.value(
+                value: context.read<WorkspaceCubit>(),
+                child: TaskDialog(task: task),
+              ),
             ),
             child: Container(
               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
