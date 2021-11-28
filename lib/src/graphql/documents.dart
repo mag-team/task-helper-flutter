@@ -1,15 +1,15 @@
-const _fullWorkspace = r'''
+const _fullWorkspace = '''
 id
 owner {
-  id, username, email
+  $_fullUser
 }
 title
 description
 members {
-  id, username, email
+  $_fullUser
 }
 tasks {
-  id, title, workspace, parentTask
+  $_fullTask
 }
 properties {
   name, type, values
@@ -66,9 +66,17 @@ query GetUsers {
 }
 ''';
 
-const userQuery = '''
+const userByIdQuery = '''
 query GetUser(\$id: ID!) {
   user(id: \$id) {
+    $_fullUser
+  }
+}
+''';
+
+const userByUsernameQuery = '''
+query GetUser(\$username: String!) {
+  userByUsername(username: \$username) {
     $_fullUser
   }
 }

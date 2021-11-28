@@ -30,4 +30,11 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
       ..add(workspace);
     emit(WorkspacesLoaded(wList));
   }
+
+  void removeWorkspace(String id) {
+    // TODO Speedup
+    final wList = List.of((state as WorkspacesLoaded).workspaces)
+      ..removeWhere((w) => w.id == id);
+    emit(WorkspacesLoaded(wList));
+  }
 }

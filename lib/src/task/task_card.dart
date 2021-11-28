@@ -7,10 +7,10 @@ import 'package:task_helper/src/workspace/cubit/workspace_cubit.dart';
 class TaskCard extends StatelessWidget {
   final Task task;
 
-  const TaskCard({
+  TaskCard({
     Key? key,
     required this.task,
-  }) : super(key: key);
+  }) : super(key: key ?? Key(task.id));
 
   @override
   Widget build(BuildContext context) => Tooltip(
@@ -23,7 +23,7 @@ class TaskCard extends StatelessWidget {
               context: context,
               builder: (_) => BlocProvider.value(
                 value: context.read<WorkspaceCubit>(),
-                child: TaskDialog(task: task),
+                child: TaskDialog(taskId: task.id),
               ),
             ),
             child: Container(

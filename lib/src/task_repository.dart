@@ -37,7 +37,7 @@ class TaskRepository {
 
   Future<User> getUserById(String id) async {
     final opt = QueryOptions(
-      document: gql(userQuery),
+      document: gql(userByIdQuery),
       variables: {'id': id},
     );
 
@@ -86,6 +86,17 @@ class TaskRepository {
     return Workspace.fromJson(res.data!['workspace']);
   }
 
+  Future<void> removeWorkspace(String id) async {
+    final opt = QueryOptions(
+      document: gql(removeWorkspaceMutation),
+      variables: {'id': id},
+    );
+
+    final res = await graphQLClient.query(opt);
+
+    if (res.hasException) throw Exception(res.exception!.toString());
+  }
+
   Future<Task> createTask(CreateTaskInput createTaskInput) async {
     final opt = MutationOptions(
       document: gql(createTaskMutation),
@@ -97,5 +108,71 @@ class TaskRepository {
     if (res.hasException) throw Exception(res.exception!.toString());
 
     return Task.fromJson(res.data!['createTask']);
+  }
+
+  Future<void> removeTask(String id) async {
+    final opt = QueryOptions(
+      document: gql(removeTaskMutation),
+      variables: {'id': id},
+    );
+
+    final res = await graphQLClient.query(opt);
+
+    if (res.hasException) throw Exception(res.exception!.toString());
+  }
+
+  Future<Workspace> addWorkspaceProperty(
+      AddWorkspacePropertyInput input) async {
+    final opt = QueryOptions(
+      document: gql(addWorkspacePropertyMutation),
+      variables: {'addWorkspacePropertyInput': input.toJson()},
+    );
+
+    final res = await graphQLClient.query(opt);
+
+    if (res.hasException) throw Exception(res.exception!.toString());
+
+    return Workspace.fromJson(res.data!['addWorkspaceProperty']);
+  }
+
+  Future<Workspace> removeWorkspaceProperty(
+      RemoveWorkspacePropertyInput input) async {
+    final opt = QueryOptions(
+      document: gql(removeWorkspacePropertyMutation),
+      variables: {'removeWorkspacePropertyInput': input.toJson()},
+    );
+
+    final res = await graphQLClient.query(opt);
+
+    if (res.hasException) throw Exception(res.exception!.toString());
+
+    return Workspace.fromJson(res.data!['removeWorkspaceProperty']);
+  }
+
+  Future<Workspace> updateWorkspaceProperty(
+      UpdateWorkspacePropertyInput input) async {
+    final opt = QueryOptions(
+      document: gql(updateWorkspacePropertyMutation),
+      variables: {'updateWorkspacePropertyInput': input.toJson()},
+    );
+
+    final res = await graphQLClient.query(opt);
+
+    if (res.hasException) throw Exception(res.exception!.toString());
+
+    return Workspace.fromJson(res.data!['updateWorkspaceProperty']);
+  }
+
+  Future<Task> updateTaskProperty(UpdateTaskPropertyInput input) async {
+    final opt = QueryOptions(
+      document: gql(updateTaskPropertyMutation),
+      variables: {'updateTaskPropertyInput': input.toJson()},
+    );
+
+    final res = await graphQLClient.query(opt);
+
+    if (res.hasException) throw Exception(res.exception!.toString());
+
+    return Task.fromJson(res.data!['updateTaskProperty']);
   }
 }

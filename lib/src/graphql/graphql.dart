@@ -60,8 +60,18 @@ GraphQLClient getGqlClient(AuthCubit authCubit, String gqlUrl) {
     },
   );
 
+  // Cache issue https://github.com/zino-app/graphql-flutter/issues/788
+  final policies = Policies(
+    fetch: FetchPolicy.noCache,
+  );
+
   return GraphQLClient(
     link: authLink.concat(apiLink),
     cache: GraphQLCache(),
+    defaultPolicies: DefaultPolicies(
+      watchQuery: policies,
+      query: policies,
+      mutate: policies,
+    ),
   );
 }

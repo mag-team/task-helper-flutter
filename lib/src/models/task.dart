@@ -6,7 +6,7 @@ class Task extends Equatable {
   final String title;
   final String workspace;
   final String? parentTask;
-  final List<TaskProperty> properties;
+  final Map<String, String?> properties;
 
   const Task({
     required this.id,
@@ -21,17 +21,16 @@ class Task extends Equatable {
         title = json['title'],
         workspace = json['workspace'],
         parentTask = json['parentTask'],
-        // TODO Remove after deploy
-        properties = (json['properties'] as List? ?? [])
+        properties = Map.fromEntries((json['properties'] as List? ?? [])
             .map((e) => TaskProperty.fromJson(e))
-            .toList();
+            .map((e) => MapEntry(e.name, e.value)));
 
   Task copyWith({
     String? id,
     String? title,
     String? workspace,
     String? parentTask,
-    List<TaskProperty>? properties,
+    Map<String, String?>? properties,
   }) =>
       Task(
         id: id ?? this.id,

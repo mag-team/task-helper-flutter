@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:task_helper/src/cubit/workspaces_cubit.dart';
 import 'package:task_helper/src/task/create_task_form.dart';
 import 'package:task_helper/src/task/cubit/create_task_cubit.dart';
 import 'package:task_helper/src/task/task_card.dart';
@@ -19,6 +20,7 @@ class WorkspaceView extends StatelessWidget {
   Widget build(BuildContext context) => BlocProvider(
         create: (context) => WorkspaceCubit(
           context.read<TaskRepository>(),
+          context.read<WorkspacesCubit>(),
           workspaceId,
         ),
         child: BlocBuilder<WorkspaceCubit, WorkspaceState>(
@@ -97,7 +99,12 @@ class WorkspaceView extends StatelessWidget {
                     ),
                     const SizedBox(width: 10),
                     PopupMenuButton(
-                      itemBuilder: (context) => [],
+                      itemBuilder: (_) => [
+                        PopupMenuItem(
+                          child: const Text('Delete'),
+                          onTap: () => context.read<WorkspaceCubit>().delete(),
+                        ),
+                      ],
                     ),
                   ],
                 ),
