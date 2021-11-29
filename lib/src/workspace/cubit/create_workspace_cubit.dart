@@ -2,7 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:task_helper/src/cubit/workspaces_cubit.dart';
-import 'package:task_helper/src/form_status.dart';
+import 'package:task_helper/src/models/form_status.dart';
 import 'package:task_helper/src/graphql/graphql.dart';
 import 'package:task_helper/src/task_repository.dart';
 

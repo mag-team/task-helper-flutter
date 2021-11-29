@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:task_helper/src/form_status.dart';
+import 'package:task_helper/src/models/form_status.dart';
 
 import 'cubit/create_workspace_cubit.dart';
 

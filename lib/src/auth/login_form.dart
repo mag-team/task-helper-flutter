@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:task_helper/src/cubit/auth_cubit.dart';
-import 'package:task_helper/src/form_status.dart';
+import 'package:task_helper/src/models/form_status.dart';
 import 'package:task_helper/src/task_repository.dart';
 
 import 'auth_card.dart';
