@@ -1,3 +1,5 @@
+import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:task_helper/src/models/task.dart';
@@ -24,8 +26,9 @@ class TaskDialog extends StatelessWidget {
       BlocBuilder<WorkspaceCubit, WorkspaceState>(
         builder: (context, workspaceState) {
           workspaceState as WorkspaceLoaded;
-          final task =
-              workspaceState.workspace.tasks!.firstWhere((t) => t.id == taskId);
+          final task = workspaceState.workspace.tasks!
+              .firstWhereOrNull((t) => t.id == taskId);
+          if (task == null) return const SizedBox.shrink();
 
           final textTheme = Theme.of(context).textTheme;
           final subTheme = textTheme.subtitle1?.copyWith(color: Colors.grey);
@@ -109,7 +112,7 @@ class TaskDialog extends StatelessWidget {
                     icon: const Icon(Icons.add),
                     label: const Text('Add Property'),
                     style: TextButton.styleFrom(
-                      padding: const EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(12),
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -137,7 +140,7 @@ class TaskDialog extends StatelessWidget {
                     ),
                   TextButton.icon(
                     // TODO Implement link task
-                    onPressed: () {},
+                    onPressed: null,
                     icon: const Icon(Icons.link),
                     label: const Text('Link Existing Task'),
                   ),
@@ -165,7 +168,7 @@ class TaskDialog extends StatelessWidget {
 }
 
 class _PropTable extends StatelessWidget {
-  final List<WorkspaceProperty> properties;
+  final Map<String, WorkspaceProperty> properties;
   final Task task;
 
   const _PropTable({
@@ -179,32 +182,33 @@ class _PropTable extends StatelessWidget {
         columnWidths: const {
           0: FractionColumnWidth(0.30),
         },
-        children: properties.map((e) {
+        children: properties.values.map((e) {
           final val = task.properties[e.name] ?? '';
           return TableRow(
             children: [
               IconTheme(
                 data: const IconThemeData(size: 20),
                 child: PopupMenuButton<void>(
-                  itemBuilder: (popCt) => [
+                  itemBuilder: (_) => [
                     PopupMenuItem(
                       padding: const EdgeInsets.symmetric(horizontal: 15),
                       child: TextFormField(
                         decoration: const InputDecoration(
                           isDense: true,
+                          errorMaxLines: 10,
                         ),
                         style: Theme.of(context).textTheme.bodyText2,
                         initialValue: e.name,
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         validator: (value) {
                           if (value == e.name) return null;
-                          if (properties.any((p) => p.name == value)) {
+                          if (properties.containsKey(value)) {
                             return 'Another property with this name already exists';
                           }
                         },
                         onFieldSubmitted: (value) {
                           if (value == e.name ||
-                              properties.any((p) => p.name == value)) {
+                              properties.containsKey(value)) {
                             return;
                           }
 
@@ -222,25 +226,44 @@ class _PropTable extends StatelessWidget {
                           const SizedBox(height: 10),
                           Text(
                             'PROPERTY TYPE',
-                            style:
-                                Theme.of(context).textTheme.caption?.copyWith(
-                                      color: Colors.grey,
-                                    ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .caption
+                                ?.copyWith(color: Colors.grey),
                           ),
                         ],
                       ),
                       enabled: false,
                     ),
                     PopupMenuItem(
-                      child: Row(
-                        children: [
-                          e.type.icon,
-                          const SizedBox(width: 5),
-                          Text(e.type.name),
-                        ],
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<WorkspacePropertyType>(
+                          isExpanded: true,
+                          value: e.type,
+                          onChanged: (value) {
+                            if (value == e.type || value == null) return;
+                            context
+                                .read<WorkspaceCubit>()
+                                .setPropertyType(e.name, value);
+                            Navigator.pop(context);
+                          },
+                          items: WorkspacePropertyType.values
+                              .map(
+                                (wp) => DropdownMenuItem(
+                                  value: wp,
+                                  child: Row(
+                                    children: [
+                                      wp.icon,
+                                      const SizedBox(width: 5),
+                                      Text(wp.name),
+                                    ],
+                                  ),
+                                ),
+                              )
+                              .toList(),
+                        ),
                       ),
-                      // TODO Implement
-                      onTap: () {},
+                      enabled: false,
                     ),
                     const PopupMenuDivider(),
                     PopupMenuItem(
@@ -266,30 +289,122 @@ class _PropTable extends StatelessWidget {
                   ),
                 ),
               ),
-              TextFormField(
+              _PropValueField(property: e, taskId: task.id, value: val),
+            ],
+          );
+        }).toList(),
+      );
+}
+
+class _PropValueField extends StatelessWidget {
+  final WorkspaceProperty property;
+  final String taskId;
+  final String? value;
+
+  const _PropValueField({
+    Key? key,
+    required this.property,
+    required this.taskId,
+    required this.value,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    switch (property.type) {
+      case WorkspacePropertyType.select:
+        return DropdownButtonFormField<String?>(
+          isExpanded: true,
+          decoration: const InputDecoration(
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 8,
+            ),
+            isDense: true,
+          ),
+          style: Theme.of(context).textTheme.bodyText2,
+          value: property.values.contains(value) ? value : null,
+          selectedItemBuilder: (_) => [
+            const Text('yo'),
+            ...property.values.map((e) => Text(e)),
+          ],
+          items: [
+            DropdownMenuItem(
+              child: TextFormField(
                 decoration: const InputDecoration(
                   contentPadding: EdgeInsets.symmetric(
                     horizontal: 12,
                     vertical: 12,
                   ),
                   isDense: true,
-                  hintText: 'Empty',
+                  hintText: 'New option',
                 ),
                 style: Theme.of(context).textTheme.bodyText2,
-                initialValue: val,
-                onFieldSubmitted: (value) {
-                  if (value == val) return;
+                initialValue: '',
+                onFieldSubmitted: (value) async {
+                  final wCubit = context.read<WorkspaceCubit>();
 
-                  context
-                      .read<WorkspaceCubit>()
-                      .setPropertyValue(task.id, e.name, value);
-                  // Navigator.pop(itC);
+                  await wCubit.addSelectValue(property.name, value);
+                  wCubit.setPropertyValue(taskId, property.name, value);
+
+                  Navigator.pop(context);
                 },
               ),
-            ],
-          );
-        }).toList(),
-      );
+              value: null,
+              enabled: false,
+            ),
+            ...property.values.map(
+              (e) => DropdownMenuItem(
+                child: Row(
+                  children: [
+                    Expanded(child: Text(e)),
+                    IconButton(
+                      onPressed: () {
+                        context
+                            .read<WorkspaceCubit>()
+                            .removeSelectValue(property.name, e);
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(Icons.cancel),
+                    ),
+                  ],
+                ),
+                value: e,
+              ),
+            ),
+          ],
+          onChanged: (value) {
+            if (value == null) return;
+
+            context
+                .read<WorkspaceCubit>()
+                .setPropertyValue(taskId, property.name, value);
+          },
+        );
+      case WorkspacePropertyType.text:
+        return TextFormField(
+          decoration: const InputDecoration(
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 12,
+            ),
+            isDense: true,
+            hintText: 'Empty',
+          ),
+          style: Theme.of(context).textTheme.bodyText2,
+          initialValue: value,
+          onFieldSubmitted: (newValue) {
+            if (newValue == value) return;
+
+            context
+                .read<WorkspaceCubit>()
+                .setPropertyValue(taskId, property.name, newValue);
+          },
+        );
+    }
+
+    throw UnimplementedError(
+        'Property type ${describeEnum(property.type)} not implemented');
+  }
 }
 
 class _TaskButton extends StatelessWidget {

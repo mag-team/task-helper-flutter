@@ -175,4 +175,32 @@ class TaskRepository {
 
     return Task.fromJson(res.data!['updateTaskProperty']);
   }
+
+  Future<Workspace> addValueToWorkspaceProperty(
+      AddValueToWorkspacePropertyInput input) async {
+    final opt = QueryOptions(
+      document: gql(addValueToWorkspacePropertyMutation),
+      variables: {'addValueToWorkspacePropertyInput': input.toJson()},
+    );
+
+    final res = await graphQLClient.query(opt);
+
+    if (res.hasException) throw Exception(res.exception!.toString());
+
+    return Workspace.fromJson(res.data!['addValueToWorkspaceProperty']);
+  }
+
+  Future<Workspace> removeValueFromWorkspaceProperty(
+      RemoveValueFromWorkspacePropertyInput input) async {
+    final opt = QueryOptions(
+      document: gql(removeValueFromWorkspacePropertyMutation),
+      variables: {'removeValueFromWorkspacePropertyInput': input.toJson()},
+    );
+
+    final res = await graphQLClient.query(opt);
+
+    if (res.hasException) throw Exception(res.exception!.toString());
+
+    return Workspace.fromJson(res.data!['removeValueFromWorkspaceProperty']);
+  }
 }

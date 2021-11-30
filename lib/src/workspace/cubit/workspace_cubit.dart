@@ -38,6 +38,7 @@ class WorkspaceCubit extends Cubit<WorkspaceState> {
   void addTask(Task task) {
     final ws = (state as WorkspaceLoaded).workspace;
     final tasks = List.of(ws.tasks!)..add(task);
+
     emit(WorkspaceLoaded(ws.copyWith(tasks: tasks)));
   }
 
@@ -45,6 +46,7 @@ class WorkspaceCubit extends Cubit<WorkspaceState> {
     final ws = (state as WorkspaceLoaded).workspace;
     final tasks = List.of(ws.tasks!)..removeWhere((t) => t.id == id);
     taskRepository.removeTask(id);
+
     emit(WorkspaceLoaded(ws.copyWith(tasks: tasks)));
   }
 
@@ -58,8 +60,9 @@ class WorkspaceCubit extends Cubit<WorkspaceState> {
     final props = (state as WorkspaceLoaded).workspace.properties!;
     int i;
     for (i = 1; true; ++i) {
-      if (!props.any((p) => p.name == 'Property $i')) break;
+      if (!props.containsKey('Property $i')) break;
     }
+
     final ws = await taskRepository.addWorkspaceProperty(
       AddWorkspacePropertyInput(
         id: workspaceId,
@@ -69,6 +72,7 @@ class WorkspaceCubit extends Cubit<WorkspaceState> {
         ),
       ),
     );
+
     emit(WorkspaceLoaded(ws));
   }
 
@@ -80,6 +84,7 @@ class WorkspaceCubit extends Cubit<WorkspaceState> {
         propertyNewName: value,
       ),
     );
+
     emit(WorkspaceLoaded(ws));
   }
 
@@ -90,6 +95,19 @@ class WorkspaceCubit extends Cubit<WorkspaceState> {
         propertyName: property,
       ),
     );
+
+    emit(WorkspaceLoaded(ws));
+  }
+
+  Future<void> setPropertyType(
+      String property, WorkspacePropertyType type) async {
+    final ws = await taskRepository.updateWorkspaceProperty(
+      UpdateWorkspacePropertyInput(
+          id: workspaceId,
+          propertyOldName: property,
+          propertyNewType: type.name),
+    );
+
     emit(WorkspaceLoaded(ws));
   }
 
@@ -104,10 +122,39 @@ class WorkspaceCubit extends Cubit<WorkspaceState> {
         ),
       ),
     );
+
     final ws = (state as WorkspaceLoaded).workspace;
     final tIndex = ws.tasks!.indexWhere((t) => t.id == taskId);
     final tasks = List.of(ws.tasks!);
     tasks[tIndex] = task;
+
     emit(WorkspaceLoaded(ws.copyWith(tasks: tasks)));
+  }
+
+  Future<void> addSelectValue(String property, String value) async {
+    final prop = (state as WorkspaceLoaded).workspace.properties![property];
+    if (prop == null || prop.values.contains(value)) return;
+
+    final ws = await taskRepository.addValueToWorkspaceProperty(
+      AddValueToWorkspacePropertyInput(
+        id: workspaceId,
+        propertyName: property,
+        value: value,
+      ),
+    );
+
+    emit(WorkspaceLoaded(ws));
+  }
+
+  Future<void> removeSelectValue(String property, String value) async {
+    final ws = await taskRepository.removeValueFromWorkspaceProperty(
+      RemoveValueFromWorkspacePropertyInput(
+        id: workspaceId,
+        propertyName: property,
+        value: value,
+      ),
+    );
+
+    emit(WorkspaceLoaded(ws));
   }
 }

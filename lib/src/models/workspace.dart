@@ -11,7 +11,7 @@ class Workspace extends Equatable {
   final String? description;
   final List<User>? members;
   final List<Task>? tasks;
-  final List<WorkspaceProperty>? properties;
+  final Map<String, WorkspaceProperty>? properties;
 
   const Workspace({
     required this.id,
@@ -35,9 +35,9 @@ class Workspace extends Equatable {
             ? (json['tasks'] as List).map((e) => Task.fromJson(e)).toList()
             : null,
         properties = json['properties'] != null
-            ? (json['properties'] as List)
+            ? Map.fromEntries((json['properties'] as List)
                 .map((e) => WorkspaceProperty.fromJson(e))
-                .toList()
+                .map((e) => MapEntry(e.name, e)))
             : null;
 
   Workspace copyWith({
@@ -47,7 +47,7 @@ class Workspace extends Equatable {
     User? owner,
     List<User>? members,
     List<Task>? tasks,
-    List<WorkspaceProperty>? properties,
+    Map<String, WorkspaceProperty>? properties,
   }) =>
       Workspace(
         id: id ?? this.id,

@@ -5,8 +5,7 @@ import 'workspace_property_type.dart';
 class WorkspaceProperty extends Equatable {
   final String name;
   final WorkspacePropertyType type;
-  // TODO Remove after fix
-  final List<String>? values;
+  final List<String> values;
 
   const WorkspaceProperty({
     required this.name,
@@ -20,7 +19,7 @@ class WorkspaceProperty extends Equatable {
           (e) => e.name == json['type'],
           orElse: () => WorkspacePropertyType.text,
         ),
-        values = json['values'];
+        values = (json['values'] as List).cast<String>();
 
   @override
   List<Object?> get props => [name, type, values];
